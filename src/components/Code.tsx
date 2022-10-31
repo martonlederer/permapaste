@@ -12,6 +12,7 @@ export const Wrapper = styled.div`
 export const Side = styled.p`
   margin: 0;
   color: #c6c6c6;
+  text-align: right;
 `;
 
 export const Text = styled.div`
@@ -20,5 +21,6 @@ export const Text = styled.div`
   outline: none;
   border: none;
   color: #c6c6c6;
-  width: 100%;
+  min-width: 100%;
+  width: max-content;
 `;

@@ -35,4 +35,16 @@ const Styles = createGlobalStyle`
     padding: 0;
     overflow-x: hidden;
   }
+
+  code, pre {
+    font-family: 'Fira Code', monospace;
+  }
+
+  pre {
+    margin: 0;
+    padding: 0 !important;
+    overflow: visible;
+    width: max-content;
+    background: transparent !important;
+  }
 `;

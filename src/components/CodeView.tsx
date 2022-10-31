@@ -1,9 +1,12 @@
 import { Action, Actions, Controls, Name } from "../components/Controls";
+import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
 import { Side, Wrapper, Text } from "../components/Code";
 import { useEffect, useMemo, useState } from "react";
-import Tooltip from "../components/Tooltip";
+import SyntaxHighlighter from "react-syntax-highlighter";
 import useHashLocation from "../utils/hash";
+import Tooltip from "../components/Tooltip";
+import styled from "styled-components"
 import axios from "axios";
 
 export default function CodeView() {
@@ -43,10 +46,21 @@ export default function CodeView() {
           </Tooltip>
         </Actions>
       </Controls>
-      <Side>{">"}</Side>
+      <Side>
+        {content.split("\n").map((_, i) => (
+          <CodeLine key={i}>{i + 1}</CodeLine>
+        ))}
+      </Side>
       <Text>
-        {content}
+        <SyntaxHighlighter style={atomOneDark}>
+          {content}
+        </SyntaxHighlighter>
       </Text>
     </Wrapper>
   );
 }
+
+const CodeLine = styled.span`
+  display: block;
+  line-height: 1.25em;
+`;
