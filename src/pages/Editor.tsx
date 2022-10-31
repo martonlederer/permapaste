@@ -1,6 +1,7 @@
 import { Action, Actions, Controls, Name } from "../components/Controls";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
-import { useState } from "react"
+import { useState } from "react";
+import Tooltip from "../components/Tooltip";
 import styled from "styled-components";
 import Arweave from "arweave";
 
@@ -31,7 +32,8 @@ export default function Editor() {
       await uploader.uploadChunk();
     }
 
-    // TODO: redirect to txid
+    // redirect to txid
+    window.location.hash = "#/" + tx.id;
   }
 
   return (
@@ -41,7 +43,9 @@ export default function Editor() {
           Permapaste
         </Name>
         <Actions>
-          <Action onClick={save} />
+          <Tooltip content="Save">
+            <Action onClick={save} />
+          </Tooltip>
           <Action disabled as={FilePlusIcon} />
           <Action disabled as={EditIcon} />
           <Action disabled as={EyeIcon} />
