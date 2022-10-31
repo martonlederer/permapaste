@@ -1,9 +1,9 @@
 import { Action, Actions, Controls, Name } from "../components/Controls";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
+import { Side, Wrapper, Text } from "../components/Code";
 import { useState } from "react";
 import Tooltip from "../components/Tooltip";
 import useHashLocation from "../utils/hash";
-import styled from "styled-components";
 import Arweave from "arweave";
 
 const arweave = new Arweave({
@@ -60,32 +60,7 @@ export default function Editor() {
         </Actions>
       </Controls>
       <Side>{">"}</Side>
-      <Text onInput={(e) => setContent(e.currentTarget.innerText)}></Text>
+      <Text contentEditable onInput={(e) => setContent(e.currentTarget.innerText)}></Text>
     </Wrapper>
   );
 }
-
-const Wrapper = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 1.5rem;
-  height: calc(100vh - 3rem);
-  padding: 1.5rem;
-  overflow: auto;
-`;
-
-const Side = styled.p`
-  margin: 0;
-  color: #c6c6c6;
-`;
-
-const Text = styled.div.attrs({
-  contentEditable: true
-})`
-  min-height: 100%;
-  line-height: 1.25em;
-  outline: none;
-  border: none;
-  color: #c6c6c6;
-  width: 100%;
-`;
