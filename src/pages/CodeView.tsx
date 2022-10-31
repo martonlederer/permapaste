@@ -67,7 +67,7 @@ export default function CodeView() {
         {owner && (
           <Tooltip content="View profile">
             <Profile onClick={() => setLocation("/p/" + owner)}>
-              {formatAddress(owner, 7)}
+              by {formatAddress(owner, 6)}
             </Profile>
           </Tooltip>
         )}

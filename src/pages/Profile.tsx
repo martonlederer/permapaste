@@ -1,5 +1,8 @@
 import { CopyIcon } from "@iconicicons/react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { run } from "ar-gql";
+import { GQLEdgeInterface } from "ar-gql/dist/faces";
+import InfiniteScroll from "react-infinite-scroll-component";
 import useHashLocation from "../utils/hash";
 import styled from "styled-components";
 import copy from "copy-to-clipboard";
@@ -13,24 +16,76 @@ export default function Profile() {
     return params[2];
   }, [location]);
 
+  const [posts, setPosts] = useState<GQLEdgeInterface[]>([]);
+  const [cursor, setCursor] = useState("");
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    fetchMore();
+  }, []);
+
+  async function fetchMore() {
+    const { data } = await run(
+      `query($owner: String!, $cursor: String!) {
+        transactions(
+          owners: [$owner]
+          tags: [{ name: "App-Name", values: "Permapaste" }]
+          after: $cursor
+          first: 20
+        ) {
+          pageInfo {
+            hasNextPage
+          }
+          edges {
+            cursor
+            node {
+              id
+              tags {
+                name
+                value
+              }
+            }
+          }
+        }
+      }
+      `,
+      { owner: address, cursor }
+    );
+
+    setHasMore(data.transactions.pageInfo.hasNextPage || data.transactions.edges.length >= 20);
+    setCursor(data.transactions.edges[data.transactions.edges.length - 1].cursor);
+    setPosts((val) => [...val, ...data.transactions.edges]);
+  }
+
   return (
     <Wrapper>
       <Address>
         {address}
         <Copy onClick={() => copy(address)} />
       </Address>
-      <Title>
-        Files
+      <Title underline>
+        Files:
       </Title>
-      <Post>
-        <PostTitle>Post title</PostTitle>
-        <Tags>
-          <TagWrapper>
-            <Tag>Name</Tag>
-            <Tag value>Value</Tag>
-          </TagWrapper>
-        </Tags>
-      </Post>
+      <InfiniteScroll
+        dataLength={posts.length}
+        next={fetchMore}
+        hasMore={hasMore}
+        loader={<Title>Loading...</Title>}
+      >
+        {posts.map((post, i) => (
+          <Post key={i} onClick={() => setLocation("/" + post.node.id)}>
+            <PostTitle>{post.node.id}</PostTitle>
+            <Tags>
+              {post.node.tags.map((tag, j) => (
+                <TagWrapper key={j}>
+                  <Tag>{tag.name}</Tag>
+                  <Tag value>{tag.value}</Tag>
+                </TagWrapper>
+              ))}
+            </Tags>
+          </Post>
+        ))}
+      </InfiniteScroll>
     </Wrapper>
   );
 }
@@ -60,14 +115,16 @@ const Copy = styled(CopyIcon)`
   }
 `;
 
-const Title = styled.p`
+const Title = styled.p<{ underline?: boolean; }>`
   font-size: 1rem;
   color: #c6c6c6;
   margin-bottom: 1.3rem;
+  text-decoration: ${props => props.underline ? "underline" : "none"};
 `;
 
 const Post = styled.div`
   cursor: pointer;
+  margin-bottom: 2rem;
 
   &:hover {
     opacity: .8;
