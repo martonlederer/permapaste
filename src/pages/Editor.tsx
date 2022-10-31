@@ -125,7 +125,7 @@ export default function Editor() {
         onKeyDown={(e) => {
           if(e.key.toLowerCase() !== "tab") return;
           e.preventDefault();
-          document.execCommand("insertHTML", false, "&nbsp;&nbsp;");
+          document.execCommand("insertText", false, "  ");
         }}
       ></Text>
     </Wrapper>
