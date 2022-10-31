@@ -8,7 +8,8 @@ import { run } from "ar-gql";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import useHashLocation from "../utils/hash";
 import Tooltip from "../components/Tooltip";
-import styled from "styled-components"
+import Footer from "../components/Footer";
+import styled from "styled-components";
 import axios from "axios";
 
 export default function CodeView() {
@@ -82,6 +83,7 @@ export default function CodeView() {
           {content}
         </SyntaxHighlighter>
       </Text>
+      <Footer />
     </Wrapper>
   );
 }

@@ -324,6 +324,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@primer/octicons-react@^17.8.0":
+  version "17.8.0"
+  resolved "https://registry.yarnpkg.com/@primer/octicons-react/-/octicons-react-17.8.0.tgz#a1bb95c54d1fa142b1cee4a3a7ec1d1edbdaa3bf"
+  integrity sha512-arLdPgMz5Se1svrm5Y7WIeSUHp02Kn4hZcJ/ELgthQJrAa6r+LpidVyzAF/aOzR5DQEwN7zvA5EjnzocTir4Yw==
+
 "@types/hast@^2.0.0":
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/@types/hast/-/hast-2.3.4.tgz#8aa5ef92c117d20d974a82bdfb6a648b08c0bafc"
