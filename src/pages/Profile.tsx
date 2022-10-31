@@ -1,9 +1,11 @@
-import { CopyIcon } from "@iconicicons/react";
+import { CopyIcon, EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
+import { Action, Actions, Controls, Name } from "../components/Controls";
 import { useEffect, useMemo, useState } from "react";
 import { run } from "ar-gql";
 import { GQLEdgeInterface } from "ar-gql/dist/faces";
 import InfiniteScroll from "react-infinite-scroll-component";
 import useHashLocation from "../utils/hash";
+import Tooltip from "../components/Tooltip";
 import styled from "styled-components";
 import copy from "copy-to-clipboard";
 
@@ -59,6 +61,19 @@ export default function Profile() {
 
   return (
     <Wrapper>
+      <Controls>
+        <Name>
+          Permapaste
+        </Name>
+        <Actions>
+          <Action disabled />
+          <Tooltip content="New">
+            <Action as={FilePlusIcon} onClick={() => setLocation("/")} />
+          </Tooltip>
+          <Action disabled as={EditIcon} />
+          <Action disabled as={EyeIcon} />
+        </Actions>
+      </Controls>
       <Address>
         {address}
         <Copy onClick={() => copy(address)} />
