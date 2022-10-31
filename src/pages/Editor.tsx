@@ -2,6 +2,7 @@ import { Action, Actions, Controls, Name } from "../components/Controls";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
 import { useState } from "react";
 import Tooltip from "../components/Tooltip";
+import useHashLocation from "../utils/hash";
 import styled from "styled-components";
 import Arweave from "arweave";
 
@@ -13,6 +14,7 @@ const arweave = new Arweave({
 
 export default function Editor() {
   const [content, setContent] = useState("");
+  const [, setLocation] = useHashLocation();
 
   async function save() {
     if (content === "") return;
@@ -33,7 +35,7 @@ export default function Editor() {
     }
 
     // redirect to txid
-    window.location.hash = "#/" + tx.id;
+    setLocation("/" + tx.id);
   }
 
   return (
