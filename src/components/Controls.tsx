@@ -39,3 +39,16 @@ export const Action = styled(FileIcon)<{ disabled?: boolean; }>`
     color: ${props => props.disabled ? "#c6c6c6" : "#fff"};;
   }
 `;
+
+export const Profile = styled.p`
+  text-decoration: underline;
+  text-align: center;
+  margin: 0.85rem 0 0;
+  cursor: pointer;
+  color: #c6c6c6;
+  font-size: .9rem;
+
+  &:hover {
+    color: #fff;
+  }
+`;

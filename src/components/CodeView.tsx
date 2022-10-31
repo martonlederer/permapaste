@@ -1,8 +1,10 @@
-import { Action, Actions, Controls, Name } from "../components/Controls";
+import { Action, Actions, Controls, Name, Profile } from "../components/Controls";
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
 import { Side, Wrapper, Text } from "../components/Code";
 import { useEffect, useMemo, useState } from "react";
+import { formatAddress } from "../utils/ar";
+import { run } from "ar-gql";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import useHashLocation from "../utils/hash";
 import Tooltip from "../components/Tooltip";
@@ -27,6 +29,23 @@ export default function CodeView() {
       .catch();
   }, [id]);
 
+  const [owner, setOwner] = useState<string>();
+
+  useEffect(() => {
+    if (!id) return;
+
+    run(
+      `query {
+        transaction(id: "${id}") {
+          owner {
+            address
+          }
+        }
+      }`
+    ).then(({ data }) => setOwner(data.transaction.owner.address))
+      .catch();
+  }, [id]);
+
   return (
     <Wrapper>
       <Controls>
@@ -45,6 +64,13 @@ export default function CodeView() {
             <Action as={EyeIcon} onClick={() => window.location.href = `https://arweave.net/${id}`} />
           </Tooltip>
         </Actions>
+        {owner && (
+          <Tooltip content="View profile">
+            <Profile onClick={() => setLocation("/p/" + owner)}>
+              {formatAddress(owner, 7)}
+            </Profile>
+          </Tooltip>
+        )}
       </Controls>
       <Side>
         {content.split("\n").map((_, i) => (

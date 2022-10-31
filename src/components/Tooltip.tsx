@@ -30,6 +30,7 @@ const TooltipBody = styled.div`
   color: #fff;
   border-radius: 4px;
   padding: .3rem .5rem .35rem;
+  width: max-content;
   display: none;
   transform: translateX(-50%);
 
