@@ -118,7 +118,16 @@ export default function Editor() {
         )) || <Profile onClick={connect}>Connect</Profile>}
       </Controls>
       <Side>{">"}</Side>
-      <Text contentEditable onInput={(e) => setContent(e.currentTarget.innerText)} ref={editorRef as any}></Text>
+      <Text
+        contentEditable
+        onInput={(e) => setContent(e.currentTarget.innerText)}
+        ref={editorRef as any}
+        onKeyDown={(e) => {
+          if(e.key.toLowerCase() !== "tab") return;
+          e.preventDefault();
+          document.execCommand("insertHTML", false, "&nbsp;&nbsp;");
+        }}
+      ></Text>
     </Wrapper>
   );
 }
