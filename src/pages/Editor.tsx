@@ -1,10 +1,11 @@
 import { Action, Actions, Controls, Name } from "../components/Controls";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
 import { Side, Wrapper, Text } from "../components/Code";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Tooltip from "../components/Tooltip";
 import useHashLocation from "../utils/hash";
 import Arweave from "arweave";
+import axios from "axios";
 
 const arweave = new Arweave({
   host: "arweave.net",
@@ -13,6 +14,8 @@ const arweave = new Arweave({
 });
 
 export default function Editor() {
+  const editorRef = useRef<HTMLDivElement>();
+
   const [content, setContent] = useState("");
   const [location, setLocation] = useHashLocation();
 
@@ -44,6 +47,24 @@ export default function Editor() {
     setLocation("/" + tx.id);
   }
 
+  const forkId = useMemo(() => {
+    const params = location.split("/");
+
+    if (params?.[1] !== "fork") return undefined;
+
+    return params?.[2];
+  }, [location]);
+
+  useEffect(() => {
+    (async () => {
+      if (!forkId || !editorRef.current) return;
+      const { data } = await axios.get<string>(`https://arweave.net/${forkId}`);
+
+      editorRef.current.innerText = data;
+      setContent(data);
+    })();
+  }, [forkId]);
+
   return (
     <Wrapper>
       <Controls>
@@ -60,7 +81,7 @@ export default function Editor() {
         </Actions>
       </Controls>
       <Side>{">"}</Side>
-      <Text contentEditable onInput={(e) => setContent(e.currentTarget.innerText)}></Text>
+      <Text contentEditable onInput={(e) => setContent(e.currentTarget.innerText)} ref={editorRef as any}></Text>
     </Wrapper>
   );
 }
