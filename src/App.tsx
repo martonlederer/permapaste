@@ -1,11 +1,26 @@
 import { createGlobalStyle } from "styled-components";
+import { isAddress } from "./utils/ar";
+import { useMemo } from "react";
+import CodeView from "./components/CodeView";
+import useHashLocation from "./utils/hash";
 import Editor from "./pages/Editor";
 
 export default function App() {
+  const [location] = useHashLocation();
+  const editor = useMemo(() => {
+    const params = location.split("/");
+
+    if (params[1] && isAddress(params[1])) {
+      return false;
+    }
+
+    return true;
+  }, [location]);
+
   return (
     <>
       <Styles />
-      <Editor />
+      {(editor && <Editor />) || <CodeView />}
     </>
   );
 }
