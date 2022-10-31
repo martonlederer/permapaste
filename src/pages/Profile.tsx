@@ -7,6 +7,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import useHashLocation from "../utils/hash";
 import Tooltip from "../components/Tooltip";
 import styled from "styled-components";
+import Post from "../components/Post";
 import copy from "copy-to-clipboard";
 
 export default function Profile() {
@@ -88,17 +89,7 @@ export default function Profile() {
         loader={<Title>Loading...</Title>}
       >
         {posts.map((post, i) => (
-          <Post key={i} onClick={() => setLocation("/" + post.node.id)}>
-            <PostTitle>{post.node.id}</PostTitle>
-            <Tags>
-              {post.node.tags.map((tag, j) => (
-                <TagWrapper key={j}>
-                  <Tag>{tag.name}</Tag>
-                  <Tag value>{tag.value}</Tag>
-                </TagWrapper>
-              ))}
-            </Tags>
-          </Post>
+          <Post id={post.node.id} tags={post.node.tags} key={i} />
         ))}
       </InfiniteScroll>
     </Wrapper>
@@ -135,38 +126,4 @@ const Title = styled.p<{ underline?: boolean; }>`
   color: #c6c6c6;
   margin-bottom: 1.3rem;
   text-decoration: ${props => props.underline ? "underline" : "none"};
-`;
-
-const Post = styled.div`
-  cursor: pointer;
-  margin-bottom: 2rem;
-
-  &:hover {
-    opacity: .8;
-  }
-`;
-
-const PostTitle = styled.p`
-  font-size: 1.2rem;
-  color: #c6c6c6;
-  margin: 0 0 .5rem;
-`;
-
-const Tags = styled.div`
-  display: flex;
-  align-items: center;
-  gap: .9rem;
-  max-width: 40vw;
-  flex-wrap: wrap;
-`;
-
-const TagWrapper = styled.div`
-  display: flex;
-  align-items: stretch;
-`;
-
-const Tag = styled.div<{ value?: boolean; }>`
-  background-color: rgba(255, 255, 255, ${props => props.value ? ".5" : "1"});
-  font-size: 1rem;
-  padding: .25rem .32rem;
 `;
