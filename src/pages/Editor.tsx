@@ -14,7 +14,7 @@ const arweave = new Arweave({
 
 export default function Editor() {
   const [content, setContent] = useState("");
-  const [, setLocation] = useHashLocation();
+  const [location, setLocation] = useHashLocation();
 
   async function save() {
     if (content === "") return;
@@ -24,7 +24,13 @@ export default function Editor() {
     tx.addTag("Content-Type", "text/plain");
     tx.addTag("App-Name", "Permapaste");
     tx.addTag("App-Version", "0.0.1");
-    // TODO fork tag
+
+    const params = location.split("/");
+
+    // forks
+    if (params[1] === "fork" && params[2]) {
+      tx.addTag("Forked", params[2]);
+    }
 
     await arweave.transactions.sign(tx);
 
