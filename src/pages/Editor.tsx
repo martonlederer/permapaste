@@ -2,6 +2,7 @@ import { Action, Actions, Controls, Name } from "../components/Controls";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Side, Wrapper, Text } from "../components/Code";
+import { FREE_DATA_SIZE } from "../utils/ar";
 import Tooltip from "../components/Tooltip";
 import useHashLocation from "../utils/hash";
 import Arweave from "arweave";
@@ -20,12 +21,20 @@ export default function Editor() {
   const [content, setContent] = useState("");
   const [location, setLocation] = useHashLocation();
 
+  const [contentType, setContentType] = useState("text/plain");
+
+  const size = useMemo(() => {
+    if (!content) return 0;
+
+    return new TextEncoder().encode(content).byteLength;
+  }, [content]);
+
   async function save() {
     if (content === "") return;
 
     const tx = await arweave.createTransaction({ data: content });
     
-    tx.addTag("Content-Type", "text/plain");
+    tx.addTag("Content-Type", contentType);
     tx.addTag("App-Name", "Permapaste");
     tx.addTag("App-Version", "0.0.1");
 
@@ -36,16 +45,31 @@ export default function Editor() {
       tx.addTag("Forked", params[2]);
     }
 
-    await arweave.transactions.sign(tx);
+    if (size > FREE_DATA_SIZE) {
+      await arweave.transactions.sign(tx);
 
-    const uploader = await arweave.transactions.getUploader(tx);
+      const uploader = await arweave.transactions.getUploader(tx);
 
-    while (!uploader.isComplete) {
-      await uploader.uploadChunk();
+      while (!uploader.isComplete) {
+        await uploader.uploadChunk();
+      }
+
+      // redirect to txid
+      setLocation("/" + tx.id);
+    } else {
+      const connected = window.arweaveWallet && (await window.arweaveWallet.getPermissions()).includes("DISPATCH");
+
+      // if ArConnect is connected, dispatch
+      if (connected) {
+        const res = await window.arweaveWallet.dispatch(tx);
+
+        setLocation("/" + res.id);
+      } else {
+        // if ArConnect is not connected we
+        // generate a wallet and submit it as
+        // ab arweave subsidised tx
+      }
     }
-
-    // redirect to txid
-    setLocation("/" + tx.id);
   }
 
   const forkId = useMemo(() => {
@@ -65,13 +89,6 @@ export default function Editor() {
       setContent(data);
     })();
   }, [forkId]);
-
-  const [contentType, setContentType] = useState("text/plain");
-  const size = useMemo(() => {
-    if (!content) return 0;
-
-    return new TextEncoder().encode(content).byteLength;
-  }, [content]);
 
   return (
     <Wrapper>

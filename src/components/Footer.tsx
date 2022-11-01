@@ -35,7 +35,7 @@ export default function Footer({ owner, bytes, contentType, setContentType }: Pr
   }, [activeAddress]);
 
   async function connect() {
-    await window.arweaveWallet.connect(["ACCESS_ADDRESS", "ACCESS_ALL_ADDRESSES", "SIGN_TRANSACTION"]);
+    await window.arweaveWallet.connect(["ACCESS_ADDRESS", "ACCESS_ALL_ADDRESSES", "SIGN_TRANSACTION", "DISPATCH"]);
     setActiveAddress(await window.arweaveWallet.getActiveAddress());
   }
 
