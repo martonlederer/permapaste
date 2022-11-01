@@ -7,3 +7,5 @@ export function formatAddress(address: string, count = 13) {
     address.substring(address.length - count, address.length)
   );
 }
+
+export const FREE_DATA_SIZE = 100000;

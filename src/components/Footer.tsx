@@ -1,11 +1,13 @@
-import { FileIcon, LogInIcon, UserIcon, InformationIcon } from "@iconicicons/react";
+import { FileIcon, LogInIcon, UserIcon, InformationIcon, InboxIcon, TagIcon, CodeIcon } from "@iconicicons/react";
+import { FREE_DATA_SIZE, formatAddress } from "../utils/ar";
 import { RepoForkedIcon } from "@primer/octicons-react";
 import { useEffect, useState } from "react";
-import { formatAddress } from "../utils/ar";
 import useHashLocation from "../utils/hash";
 import styled from "styled-components";
+import prettyBytes from "pretty-bytes";
+import Tooltip from "./Tooltip";
 
-export default function Footer() {
+export default function Footer({ owner, bytes, contentType, setContentType }: Props) {
   const [, setLocation] = useHashLocation();
 
   const [activeAddress, setActiveAddress] = useState<string>();
@@ -44,20 +46,56 @@ export default function Footer() {
           <RepoForkedIcon />
           main
         </Element>
-        <Element>
-          <FileIcon />
-          Size: 100 Kb (FREE)
-        </Element>
+        {owner && (
+          <Element onClick={() => setLocation("/p/" + owner)}>
+            <TagIcon />
+            Owner: {formatAddress(owner, 6)}
+          </Element>
+        )}
+        <Tooltip content="No need to pay or connect a wallet under 100 Kb" top>
+          <Element>
+            <CodeIcon />
+            Size: {prettyBytes(bytes)}
+            {" "}
+            {bytes <= FREE_DATA_SIZE && "(FREE)"}
+          </Element>
+        </Tooltip>
+        <Tooltip content="File Content-Type" top>
+          <Element>
+            <FileIcon />
+            <CustomSelect 
+              value={contentType}
+              disabled={!setContentType}
+              onChange={(e) => {
+                if (!setContentType) return;
+                setContentType(e.target.value)
+              }}
+            >
+              <option value="text/plain">text/plain</option>
+              <option value="text/javascript">text/javascript</option>
+              <option value="text/typescript">text/typescript</option>
+              <option value="text/html">text/html</option>
+              <option value="text/csv">text/csv</option>
+              <option value="text/css">text/css</option>
+              <option value="application/json">application/json</option>
+              <option value="image/svg+xml">image/svg+xml</option>
+            </CustomSelect>
+          </Element>
+        </Tooltip>
       </Section>
       <Section>
-        <Element>
+        <Element onClick={() => setLocation("/about")}>
           <InformationIcon />
           About
+        </Element>
+        <Element onClick={() => setLocation("/feed")}>
+          <InboxIcon />
+          Feed
         </Element>
         {(activeAddress && (
           <Element onClick={() => setLocation("/p/" + activeAddress)}>
             <UserIcon />
-            {formatAddress(activeAddress, 7)}
+            {formatAddress(activeAddress, 6)}
           </Element>
         )) || (
           <Element onClick={connect}>
@@ -92,7 +130,7 @@ const Section = styled.div`
 const Element = styled(Section)`
   gap: .275rem;
   cursor: pointer;
-  padding: .2rem .35rem;
+  padding: .23rem .35rem;
   font-size: .7rem;
   font-weight: 500;
 
@@ -106,3 +144,26 @@ const Element = styled(Section)`
     height: 1em;
   }
 `;
+
+const CustomSelect = styled.select`
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  color: #fff;
+  font-size: .7rem;
+  cursor: pointer;
+  appearance: none;
+
+  &:disabled {
+    opacity: 1;
+  }
+`;
+
+interface Props {
+  owner?: string;
+  bytes: number;
+  contentType: string;
+  setContentType?: (v: string) => any;
+}

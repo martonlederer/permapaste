@@ -66,6 +66,13 @@ export default function Editor() {
     })();
   }, [forkId]);
 
+  const [contentType, setContentType] = useState("text/plain");
+  const size = useMemo(() => {
+    if (!content) return 0;
+
+    return new TextEncoder().encode(content).byteLength;
+  }, [content]);
+
   return (
     <Wrapper>
       <Controls>
@@ -92,7 +99,7 @@ export default function Editor() {
           document.execCommand("insertText", false, "  ");
         }}
       ></Text>
-      <Footer />
+      <Footer bytes={size} contentType={contentType} setContentType={setContentType} />
     </Wrapper>
   );
 }

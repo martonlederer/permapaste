@@ -47,7 +47,7 @@ const Styles = createGlobalStyle`
     overflow-x: hidden;
   }
 
-  code, pre {
+  code, pre, input, button, textarea, select {
     font-family: 'Fira Code', monospace;
   }
 

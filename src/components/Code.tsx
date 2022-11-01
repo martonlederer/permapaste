@@ -13,6 +13,7 @@ export const Side = styled.p`
   margin: 0;
   color: #c6c6c6;
   text-align: right;
+  user-select: none;
 `;
 
 export const Text = styled.div`

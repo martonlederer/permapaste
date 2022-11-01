@@ -22,12 +22,17 @@ export default function CodeView() {
     return params?.[1];
   }, [location]);
 
-  useEffect(() => {
-    if (!id) return;
+  const [contentType, setContentType] = useState("text/plain");
 
-    axios.get<string>(`https://arweave.net/${id}`)
-      .then(({ data }) => setContent(data))
-      .catch();
+  useEffect(() => {
+    (async () => {
+      if (!id) return;
+
+      const { data, headers } = await axios.get<string>(`https://arweave.net/${id}`);
+
+      setContent(data);
+      setContentType(headers["content-type"]?.split(";")?.[0] ||  "text/plain");
+    })();
   }, [id]);
 
   const [owner, setOwner] = useState<string>();
@@ -47,6 +52,12 @@ export default function CodeView() {
       .catch();
   }, [id]);
 
+  const size = useMemo(() => {
+    if (!content) return 0;
+
+    return new TextEncoder().encode(content).byteLength;
+  }, [content]);
+
   return (
     <Wrapper>
       <Controls>
@@ -65,13 +76,6 @@ export default function CodeView() {
             <Action as={EyeIcon} onClick={() => window.location.href = `https://arweave.net/${id}`} />
           </Tooltip>
         </Actions>
-        {owner && (
-          <Tooltip content="View profile">
-            <Profile onClick={() => setLocation("/p/" + owner)}>
-              by {formatAddress(owner, 6)}
-            </Profile>
-          </Tooltip>
-        )}
       </Controls>
       <Side>
         {content.split("\n").map((_, i) => (
@@ -83,7 +87,7 @@ export default function CodeView() {
           {content}
         </SyntaxHighlighter>
       </Text>
-      <Footer />
+      <Footer owner={owner} bytes={size} contentType={contentType} />
     </Wrapper>
   );
 }
