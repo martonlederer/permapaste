@@ -20,16 +20,20 @@ export default function Profile() {
   }, [location]);
 
   const [posts, setPosts] = useState<GQLEdgeInterface[]>([]);
-  const [cursor, setCursor] = useState("");
+  const [cursor, setCursor] = useState<string>();
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    fetchMore();
-  }, []);
+    fetchMore(true);
+  }, [address]);
 
-  async function fetchMore() {
+  async function fetchMore(first?: boolean) {
+    if (!first && !cursor) {
+      return;
+    }
+
     const { data } = await run(
-      `query($owner: String!, $cursor: String!) {
+      `query($owner: String!, $cursor: String) {
         transactions(
           owners: [$owner]
           tags: [{ name: "App-Name", values: "Permapaste" }]
@@ -57,7 +61,7 @@ export default function Profile() {
 
     setHasMore(data.transactions.pageInfo.hasNextPage || data.transactions.edges.length >= 20);
     setCursor(data.transactions.edges[data.transactions.edges.length - 1].cursor);
-    setPosts((val) => [...val, ...data.transactions.edges]);
+    setPosts((val) => [...(first ? [] : val), ...data.transactions.edges]);
   }
 
   return (
@@ -98,6 +102,7 @@ export default function Profile() {
 
 const Wrapper = styled.div`
   padding: 2.6rem 3rem;
+  min-height: calc(100vh - 2.6rem * 2);
 `;
 
 const Address = styled.p`
