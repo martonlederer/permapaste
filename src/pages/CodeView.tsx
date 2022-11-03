@@ -6,9 +6,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "wouter";
 import { run } from "ar-gql";
 import SyntaxHighlighter from "react-syntax-highlighter";
+import ReactMarkdown from "react-markdown";
 import Tooltip from "../components/Tooltip";
 import Footer from "../components/Footer";
 import styled from "styled-components";
+import remarkGfm from "remark-gfm";
 import axios from "axios";
 
 export default function CodeView({ id }: Props) {
@@ -71,19 +73,27 @@ export default function CodeView({ id }: Props) {
           </Tooltip>
         </Actions>
       </Controls>
-      <Side>
-        {content.split("\n").map((_, i) => (
-          <CodeLine key={i}>{i + 1}</CodeLine>
-        ))}
-        <CodeLine>
-          {content.split("\n").length + 1}
-        </CodeLine>
-      </Side>
-      <Text>
-        <SyntaxHighlighter style={atomOneDark}>
-          {content}
-        </SyntaxHighlighter>
-      </Text>
+      {(contentType !== "text/markdown" && (
+        <>
+          <Side>
+            {content.split("\n").map((_, i) => (
+              <CodeLine key={i}>{i + 1}</CodeLine>
+            ))}
+            <CodeLine>
+              {content.split("\n").length + 1}
+            </CodeLine>
+          </Side>
+          <Text>
+            <SyntaxHighlighter style={atomOneDark}>
+              {content}
+            </SyntaxHighlighter>
+          </Text>
+        </>
+      )) || (
+        <MarkdownWrapper>
+          <ReactMarkdown children={content} remarkPlugins={[remarkGfm]} />
+        </MarkdownWrapper>
+      )}
       <Footer owner={owner} bytes={size} contentType={contentType} />
     </Wrapper>
   );
@@ -97,3 +107,11 @@ const CodeLine = styled.span`
 interface Props {
   id: string;
 }
+
+const MarkdownWrapper = styled.div`
+  color: #c6c6c6;
+
+  a {
+    color: #ff5aa7;
+  }
+`;
