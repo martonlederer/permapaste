@@ -1,13 +1,13 @@
 import { FileIcon, LogInIcon, UserIcon, InformationIcon, InboxIcon, TagIcon, CodeIcon } from "@iconicicons/react";
+import { MarkGithubIcon, RepoForkedIcon } from "@primer/octicons-react";
 import { FREE_DATA_SIZE, formatAddress } from "../utils/ar";
-import { RepoForkedIcon } from "@primer/octicons-react";
 import { useEffect, useState } from "react";
 import useHashLocation from "../utils/hash";
 import styled from "styled-components";
 import prettyBytes from "pretty-bytes";
 import Tooltip from "./Tooltip";
 
-const ABOUT_TX_ID = "jF9hXiG9TanD9u1cAyffXInYeGxTeZlREJTwNHXXD24";
+const ABOUT_TX_ID = "YEMeoSKjdv07B022sefqXQCLeqUZ7NlpJ_kFi2T2Pvg";
 
 export default function Footer({ owner, bytes, contentType, setContentType }: Props) {
   const [, setLocation] = useHashLocation();
@@ -87,6 +87,9 @@ export default function Footer({ owner, bytes, contentType, setContentType }: Pr
         </Tooltip>
       </Section>
       <Section>
+        <Element onClick={() => window.open("https://github.com/martonlederer/permapaste")}>
+          <MarkGithubIcon />
+        </Element>
         <Element onClick={() => setLocation("/" + ABOUT_TX_ID)}>
           <InformationIcon />
           About
