@@ -2,6 +2,9 @@ import { Action, Actions, Controls, Name } from "../components/Controls";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Side, Wrapper, Text } from "../components/Code";
+// @ts-expect-error
+import { createData, signers } from "../../public/bundle.js";
+import { uploadDataToBundlr } from "../utils/bundlr";
 import { FREE_DATA_SIZE } from "../utils/ar";
 import Tooltip from "../components/Tooltip";
 import useHashLocation from "../utils/hash";
@@ -33,16 +36,25 @@ export default function Editor() {
     if (content === "") return;
 
     const tx = await arweave.createTransaction({ data: content });
-    
-    tx.addTag("Content-Type", contentType);
-    tx.addTag("App-Name", "Permapaste");
-    tx.addTag("App-Version", "0.0.1");
+    const tags = [
+      { name: "Content-Type", value: contentType },
+      { name: "App-Name", value: "Permapaste" },
+      { name: "App-Version", value: "0.0.1" }
+    ];
 
     const params = location.split("/");
 
     // forks
     if (params[1] === "fork" && params[2]) {
-      tx.addTag("Forked", params[2]);
+      tags.push({
+        name: "Forked",
+        value: params[2]
+      });
+    }
+
+    // add tags
+    for (const tag of tags) {
+      tx.addTag(tag.name, tag.value);
     }
 
     if (size > FREE_DATA_SIZE) {
@@ -68,6 +80,19 @@ export default function Editor() {
         // if ArConnect is not connected we
         // generate a wallet and submit it as
         // ab arweave subsidised tx
+        const jwk = await arweave.wallets.generate();
+        const dataSigner = new signers.ArweaveSigner(jwk);
+        const dataEntry = createData(
+          tx.get("data", { decode: true, string: false }),
+          dataSigner,
+          { tags }
+        );
+
+        // sign and upload bundler tx
+        await dataEntry.sign(dataSigner);
+        await uploadDataToBundlr(dataEntry);
+console.log(dataEntry)
+        //setLocation("/" + dataEntry.id);
       }
     }
   }
