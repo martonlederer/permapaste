@@ -7,6 +7,8 @@ import styled from "styled-components";
 import prettyBytes from "pretty-bytes";
 import Tooltip from "./Tooltip";
 
+const ABOUT_TX_ID = "JiLiIhCOMqjCXUabURZ5998D9m2Fm3PbShXEfmE-RaI";
+
 export default function Footer({ owner, bytes, contentType, setContentType }: Props) {
   const [, setLocation] = useHashLocation();
 
@@ -74,6 +76,7 @@ export default function Footer({ owner, bytes, contentType, setContentType }: Pr
               <option value="text/plain">text/plain</option>
               <option value="text/javascript">text/javascript</option>
               <option value="text/typescript">text/typescript</option>
+              <option value="text/markdown">text/markdown</option>
               <option value="text/html">text/html</option>
               <option value="text/csv">text/csv</option>
               <option value="text/css">text/css</option>
@@ -84,7 +87,7 @@ export default function Footer({ owner, bytes, contentType, setContentType }: Pr
         </Tooltip>
       </Section>
       <Section>
-        <Element onClick={() => setLocation("/about")}>
+        <Element onClick={() => setLocation("/" + ABOUT_TX_ID)}>
           <InformationIcon />
           About
         </Element>

@@ -34,6 +34,7 @@ export const Action = styled(FileIcon)<{ disabled?: boolean; }>`
   height: 1em;
   color: #c6c6c6;
   cursor: ${props => props.disabled ? "normal" : "pointer"};
+  opacity: ${props => props.disabled ? ".74" : "1"};
 
   &:hover {
     color: ${props => props.disabled ? "#c6c6c6" : "#fff"};;

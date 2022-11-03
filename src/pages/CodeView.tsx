@@ -75,6 +75,9 @@ export default function CodeView({ id }: Props) {
         {content.split("\n").map((_, i) => (
           <CodeLine key={i}>{i + 1}</CodeLine>
         ))}
+        <CodeLine>
+          {content.split("\n").length + 1}
+        </CodeLine>
       </Side>
       <Text>
         <SyntaxHighlighter style={atomOneDark}>
