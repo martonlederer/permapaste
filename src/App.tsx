@@ -6,6 +6,7 @@ import useHashLocation from "./utils/hash";
 import CodeView from "./pages/CodeView";
 import Profile from "./pages/Profile";
 import Editor from "./pages/Editor";
+import Feed from "./pages/Feed";
 
 const convertPathToRegexp = (path: string) => {
   let keys: Key[] = [];
@@ -22,6 +23,7 @@ export default function App() {
       <Styles />
       <Router hook={useHashLocation} matcher={customMatcher}>
         <Switch>
+          <Route path="/feed" component={Feed} />
           <Route path="/p/:address([a-z0-9_-]{43})">
             {(params) => <Profile address={params.address} />}
           </Route>

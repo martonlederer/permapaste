@@ -1,8 +1,8 @@
-import styled from "styled-components"
-import useHashLocation from "../utils/hash"
+import { useLocation } from "wouter";
+import styled from "styled-components";
 
-export default function Post({ id, tags, owner }: Props) {
-  const [, setLocation] = useHashLocation();
+export default function Post({ id, tags }: Props) {
+  const [, setLocation] = useLocation();
   
   return (
     <PostWrapper onClick={() => setLocation("/" + id)}>
@@ -22,7 +22,6 @@ export default function Post({ id, tags, owner }: Props) {
 interface Props {
   id: string;
   tags: { name: string; value: string; }[];
-  owner?: string;
 }
 
 const PostWrapper = styled.div`
