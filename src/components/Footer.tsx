@@ -7,7 +7,7 @@ import styled from "styled-components";
 import prettyBytes from "pretty-bytes";
 import Tooltip from "./Tooltip";
 
-const ABOUT_TX_ID = "JiLiIhCOMqjCXUabURZ5998D9m2Fm3PbShXEfmE-RaI";
+const ABOUT_TX_ID = "jF9hXiG9TanD9u1cAyffXInYeGxTeZlREJTwNHXXD24";
 
 export default function Footer({ owner, bytes, contentType, setContentType }: Props) {
   const [, setLocation] = useHashLocation();

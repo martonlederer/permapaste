@@ -5,8 +5,8 @@ import { Side, Wrapper, Text } from "../components/Code";
 // @ts-expect-error
 import { createData, signers } from "../../public/bundle.js";
 import { uploadDataToBundlr } from "../utils/bundlr";
+import { useLocation, useRoute } from "wouter";
 import { FREE_DATA_SIZE } from "../utils/ar";
-import { useLocation } from "wouter";
 import Tooltip from "../components/Tooltip";
 import Footer from "../components/Footer";
 import Arweave from "arweave";
@@ -22,7 +22,7 @@ export default function Editor() {
   const editorRef = useRef<HTMLDivElement>();
 
   const [content, setContent] = useState("");
-  const [location, setLocation] = useLocation();
+  const [, setLocation] = useLocation();
 
   const [contentType, setContentType] = useState("text/plain");
 
@@ -31,6 +31,8 @@ export default function Editor() {
 
     return new TextEncoder().encode(content).byteLength;
   }, [content]);
+
+  const [isFork, params] = useRoute("/fork/:id([a-z0-9_-]{43})");
 
   async function save() {
     if (content === "") return;
@@ -42,13 +44,11 @@ export default function Editor() {
       { name: "App-Version", value: "0.0.1" }
     ];
 
-    const params = location.split("/");
-
     // forks
-    if (params[1] === "fork" && params[2]) {
+    if (isFork) {
       tags.push({
         name: "Forked",
-        value: params[2]
+        value: params.id
       });
     }
 
@@ -97,23 +97,16 @@ export default function Editor() {
     }
   }
 
-  const forkId = useMemo(() => {
-    const params = location.split("/");
-
-    if (params?.[1] !== "fork") return undefined;
-
-    return params?.[2];
-  }, [location]);
-
   useEffect(() => {
     (async () => {
-      if (!forkId || !editorRef.current) return;
-      const { data } = await axios.get<string>(`https://arweave.net/${forkId}`);
+      if (!isFork || !params.id || !editorRef.current || content !== "") return;
+      const { data, headers } = await axios.get<string>(`https://arweave.net/${params.id}`);
 
       editorRef.current.innerText = data;
       setContent(data);
+      setContentType(headers["content-type"]?.split(";")?.[0] ||  "text/plain");
     })();
-  }, [forkId]);
+  }, [params]);
 
   return (
     <Wrapper>
