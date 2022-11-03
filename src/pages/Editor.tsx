@@ -6,11 +6,11 @@ import { Side, Wrapper, Text } from "../components/Code";
 import { createData, signers } from "../../public/bundle.js";
 import { uploadDataToBundlr } from "../utils/bundlr";
 import { FREE_DATA_SIZE } from "../utils/ar";
+import { useLocation } from "wouter";
 import Tooltip from "../components/Tooltip";
-import useHashLocation from "../utils/hash";
+import Footer from "../components/Footer";
 import Arweave from "arweave";
 import axios from "axios";
-import Footer from "../components/Footer"
 
 const arweave = new Arweave({
   host: "arweave.net",
@@ -22,7 +22,7 @@ export default function Editor() {
   const editorRef = useRef<HTMLDivElement>();
 
   const [content, setContent] = useState("");
-  const [location, setLocation] = useHashLocation();
+  const [location, setLocation] = useLocation();
 
   const [contentType, setContentType] = useState("text/plain");
 

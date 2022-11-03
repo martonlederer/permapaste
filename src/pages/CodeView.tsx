@@ -1,26 +1,20 @@
-import { Action, Actions, Controls, Name, Profile } from "../components/Controls";
+import { Action, Actions, Controls, Name } from "../components/Controls";
 import { atomOneDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 import { EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
 import { Side, Wrapper, Text } from "../components/Code";
 import { useEffect, useMemo, useState } from "react";
-import { formatAddress } from "../utils/ar";
+import { useLocation } from "wouter";
 import { run } from "ar-gql";
 import SyntaxHighlighter from "react-syntax-highlighter";
-import useHashLocation from "../utils/hash";
 import Tooltip from "../components/Tooltip";
 import Footer from "../components/Footer";
 import styled from "styled-components";
 import axios from "axios";
 
-export default function CodeView() {
+export default function CodeView({ id }: Props) {
   const [content, setContent] = useState("");
 
-  const [location, setLocation] = useHashLocation();
-  const id = useMemo(() => {
-    const params = location.split("/");
-
-    return params?.[1];
-  }, [location]);
+  const [, setLocation] = useLocation();
 
   const [contentType, setContentType] = useState("text/plain");
 
@@ -96,3 +90,7 @@ const CodeLine = styled.span`
   display: block;
   line-height: 1.25em;
 `;
+
+interface Props {
+  id: string;
+}

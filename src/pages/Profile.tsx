@@ -1,23 +1,17 @@
 import { CopyIcon, EditIcon, EyeIcon, FilePlusIcon } from "@iconicicons/react";
 import { Action, Actions, Controls, Name } from "../components/Controls";
 import { useEffect, useMemo, useState } from "react";
-import { run } from "ar-gql";
 import { GQLEdgeInterface } from "ar-gql/dist/faces";
+import { useLocation, useRoute } from "wouter";
+import { run } from "ar-gql";
 import InfiniteScroll from "react-infinite-scroll-component";
-import useHashLocation from "../utils/hash";
 import Tooltip from "../components/Tooltip";
 import styled from "styled-components";
 import Post from "../components/Post";
 import copy from "copy-to-clipboard";
 
-export default function Profile() {
-  const [location, setLocation] = useHashLocation();
-
-  const address = useMemo(() => {
-    const params = location.split("/");
-
-    return params[2];
-  }, [location]);
+export default function Profile({ address }: Props) {
+  const [, setLocation] = useLocation();
 
   const [posts, setPosts] = useState<GQLEdgeInterface[]>([]);
   const [cursor, setCursor] = useState<string>();
@@ -132,3 +126,7 @@ const Title = styled.p<{ underline?: boolean; }>`
   margin-bottom: 1.3rem;
   text-decoration: ${props => props.underline ? "underline" : "none"};
 `;
+
+interface Props {
+  address: string;
+}

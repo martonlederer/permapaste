@@ -1,37 +1,38 @@
 import { createGlobalStyle } from "styled-components";
-import { isAddress } from "./utils/ar";
-import { useMemo } from "react";
-import CodeView from "./pages/CodeView";
+import { pathToRegexp, Key } from "path-to-regexp";
+import { Router, Route, Switch } from "wouter";
+import makeCachedMatcher from "wouter/matcher";
 import useHashLocation from "./utils/hash";
+import CodeView from "./pages/CodeView";
 import Profile from "./pages/Profile";
 import Editor from "./pages/Editor";
 
+const convertPathToRegexp = (path: string) => {
+  let keys: Key[] = [];
+
+  const regexp = pathToRegexp(path, keys, { strict: true });
+  return { keys, regexp };
+};
+
+const customMatcher = makeCachedMatcher(convertPathToRegexp);
+
 export default function App() {
-  const [location] = useHashLocation();
-  const editor = useMemo(() => {
-    const params = location.split("/");
-
-    if (params[1] && isAddress(params[1])) {
-      return false;
-    }
-
-    return true;
-  }, [location]);
-
-  const profile = useMemo(() => {
-    const params = location.split("/");
-
-    if (params[1] === "p" && params[2] && isAddress(params[2])) {
-      return true;
-    }
-
-    return false;
-  }, [location]);
-
   return (
     <>
       <Styles />
-      {((profile && <Profile />) || (editor && <Editor />)) || <CodeView />}
+      <Router hook={useHashLocation} matcher={customMatcher}>
+        <Switch>
+          <Route path="/p/:address([a-z0-9_-]{43})">
+            {(params) => <Profile address={params.address} />}
+          </Route>
+          <Route path="/:txid([a-z0-9_-]{43})">
+            {(params) => <CodeView id={params.txid} />}
+          </Route>
+          <Route>
+            <Editor />
+          </Route>
+        </Switch>
+      </Router>
     </>
   );
 }
