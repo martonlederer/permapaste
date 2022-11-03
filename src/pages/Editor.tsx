@@ -91,8 +91,8 @@ export default function Editor() {
         // sign and upload bundler tx
         await dataEntry.sign(dataSigner);
         await uploadDataToBundlr(dataEntry);
-console.log(dataEntry)
-        //setLocation("/" + dataEntry.id);
+
+        setLocation("/" + dataEntry.id);
       }
     }
   }
