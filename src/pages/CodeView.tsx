@@ -94,7 +94,7 @@ export default function CodeView({ id }: Props) {
           <ReactMarkdown children={content} remarkPlugins={[remarkGfm]} />
         </MarkdownWrapper>
       )}
-      <Footer owner={owner} bytes={size} contentType={contentType} />
+      <Footer id={id} owner={owner} bytes={size} contentType={contentType} />
     </Wrapper>
   );
 }

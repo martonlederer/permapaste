@@ -1,15 +1,17 @@
 import { FileIcon, LogInIcon, UserIcon, InformationIcon, InboxIcon, TagIcon, CodeIcon } from "@iconicicons/react";
 import { MarkGithubIcon, RepoForkedIcon } from "@primer/octicons-react";
+import { ForkTree, loadDirectForkTree } from "../utils/fork";
 import { FREE_DATA_SIZE, formatAddress } from "../utils/ar";
 import { useEffect, useState } from "react";
 import useHashLocation from "../utils/hash";
+import ForkTreeView from "./ForkTreeView";
 import styled from "styled-components";
 import prettyBytes from "pretty-bytes";
 import Tooltip from "./Tooltip";
 
 const ABOUT_TX_ID = "YEMeoSKjdv07B022sefqXQCLeqUZ7NlpJ_kFi2T2Pvg";
 
-export default function Footer({ owner, bytes, contentType, setContentType }: Props) {
+export default function Footer({ owner, bytes, contentType, setContentType, id }: Props) {
   const [, setLocation] = useHashLocation();
 
   const [activeAddress, setActiveAddress] = useState<string>();
@@ -41,12 +43,23 @@ export default function Footer({ owner, bytes, contentType, setContentType }: Pr
     setActiveAddress(await window.arweaveWallet.getActiveAddress());
   }
 
+  const [forkTree, setForkTree] = useState<ForkTree>();
+
+  useEffect(() => {
+    (async () => {
+      if (!id) return;
+      const tree = await loadDirectForkTree(id);
+
+      setForkTree(tree);
+    })();
+  }, [id]);
+
   return (
     <FooterWrapper>
       <Section>
         <Element>
           <RepoForkedIcon />
-          main
+          {(forkTree && forkTree.id !== id && `Fork of ${formatAddress(forkTree.id, 8)}`) || "main"}
         </Element>
         {owner && (
           <Element onClick={() => setLocation("/p/" + owner)}>
@@ -110,6 +123,9 @@ export default function Footer({ owner, bytes, contentType, setContentType }: Pr
           </Element>
         )}
       </Section>
+      <ForkTreeWrapper>
+        {forkTree && <ForkTreeView baseTree={forkTree} />}
+      </ForkTreeWrapper>
     </FooterWrapper>
   );
 }
@@ -168,8 +184,16 @@ const CustomSelect = styled.select`
 `;
 
 interface Props {
+  id?: string;
   owner?: string;
   bytes: number;
   contentType: string;
   setContentType?: (v: string) => any;
 }
+
+const ForkTreeWrapper = styled.div`
+  position: absolute;
+  left: 1rem;
+  bottom: 2rem;
+  background-color: #0D1116;
+`;
