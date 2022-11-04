@@ -43,20 +43,20 @@ export default function Footer({ owner, bytes, contentType, setContentType, id }
     setActiveAddress(await window.arweaveWallet.getActiveAddress());
   }
 
+  const [showForkTree, setShowForkTree] = useState(false);
+
+  useEffect(() => setShowForkTree(false), [id]);
+
   const [forkTree, setForkTree] = useState<ForkTree>();
 
   useEffect(() => {
     (async () => {
-      if (!id) return;
+      if (!id || !showForkTree) return;
       const tree = await loadDirectForkTree(id);
 
       setForkTree(tree);
     })();
-  }, [id]);
-
-  const [showForkTree, setShowForkTree] = useState(false);
-
-  useEffect(() => setShowForkTree(false), [id]);
+  }, [id, showForkTree]);
 
   return (
     <FooterWrapper>
