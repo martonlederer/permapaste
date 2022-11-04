@@ -54,6 +54,11 @@ export default function ForkTreeView({ baseTree, indent = 1 }: Props) {
         )) || " (active)"}
       </ForkElementWrapper>
       {tree.forks && tree.forks.map((fork, i) => <ForkTreeView baseTree={fork} key={i} indent={indent + 1} />)}
+      {open && (!tree.forks || tree.forks.length === 0) && (
+        <ForkElementWrapper indent={indent + 3} selected={false}>
+          No child forks...
+        </ForkElementWrapper>
+      )}
     </>
   );
 }
