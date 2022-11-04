@@ -10,6 +10,8 @@ export default function ForkTreeView({ baseTree, indent = 1 }: Props) {
 
   useEffect(() => setTree(baseTree), [baseTree]);
 
+  const [open, setOpen] = useState(false);
+
   async function toggle() {
     if (tree.forks && tree.forks.length > 1) {
       return;
@@ -32,6 +34,7 @@ export default function ForkTreeView({ baseTree, indent = 1 }: Props) {
 
       return val;
     });
+    setOpen(true);
   }
 
   const [, setLocation] = useLocation();
@@ -39,7 +42,7 @@ export default function ForkTreeView({ baseTree, indent = 1 }: Props) {
   return (
     <>
       <ForkElementWrapper indent={indent} onClick={toggle}>
-        {(tree.forks && tree.forks.length > 1 && <ChevronDownIcon />) || <ChevronRightIcon />}
+        {(open && <ChevronDownIcon />) || <ChevronRightIcon />}
         {tree.id}
         <Tooltip content="Checkout" top>
           <ShareIcon onClick={() => setLocation("/" + tree.id)} />

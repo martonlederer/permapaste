@@ -54,10 +54,14 @@ export default function Footer({ owner, bytes, contentType, setContentType, id }
     })();
   }, [id]);
 
+  const [showForkTree, setShowForkTree] = useState(false);
+
+  useEffect(() => setShowForkTree(false), [id]);
+
   return (
     <FooterWrapper>
       <Section>
-        <Element>
+        <Element onClick={() => setShowForkTree(val => !val)}>
           <RepoForkedIcon />
           {(forkTree && forkTree.id !== id && `Fork of ${formatAddress(forkTree.id, 8)}`) || "main"}
         </Element>
@@ -123,9 +127,11 @@ export default function Footer({ owner, bytes, contentType, setContentType, id }
           </Element>
         )}
       </Section>
-      <ForkTreeWrapper>
-        {forkTree && <ForkTreeView baseTree={forkTree} />}
-      </ForkTreeWrapper>
+      {showForkTree && (
+        <ForkTreeWrapper>
+          {forkTree && <ForkTreeView baseTree={forkTree} />}
+        </ForkTreeWrapper>
+      )}
     </FooterWrapper>
   );
 }
