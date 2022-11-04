@@ -2,7 +2,7 @@ import { FileIcon, LogInIcon, UserIcon, InformationIcon, InboxIcon, TagIcon, Cod
 import { MarkGithubIcon, RepoForkedIcon } from "@primer/octicons-react";
 import { ForkTree, loadDirectForkTree } from "../utils/fork";
 import { FREE_DATA_SIZE, formatAddress } from "../utils/ar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useHashLocation from "../utils/hash";
 import ForkTreeView from "./ForkTreeView";
 import styled from "styled-components";
@@ -51,17 +51,37 @@ export default function Footer({ owner, bytes, contentType, setContentType, id }
 
   useEffect(() => {
     (async () => {
-      if (!id || !showForkTree) return;
+      if (!id) return;
       const tree = await loadDirectForkTree(id);
 
       setForkTree(tree);
     })();
-  }, [id, showForkTree]);
+  }, [id]);
+
+  const forkTreeRef = useRef<HTMLDivElement>();
+
+  useEffect(() => {
+    const listener = (e: MouseEvent) => {
+      if (!showForkTree) return;
+      if (forkTreeRef.current?.contains(e.target as Node)) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+      setShowForkTree(false);
+    };
+
+    window.addEventListener("mousedown", listener);
+
+    return () => window.removeEventListener("mousedown", listener);
+  }, [forkTreeRef, showForkTree]);
 
   return (
     <FooterWrapper>
       <Section>
-        <Element onClick={() => setShowForkTree(val => !val)}>
+        <Element onClick={() => {
+          if (showForkTree) return;
+          setShowForkTree(true);
+        }}>
           <RepoForkedIcon />
           {(forkTree && forkTree.id !== id && `Fork of ${formatAddress(forkTree.id, 8)}`) || "main"}
         </Element>
@@ -128,7 +148,7 @@ export default function Footer({ owner, bytes, contentType, setContentType, id }
         )}
       </Section>
       {showForkTree && (
-        <ForkTreeWrapper>
+        <ForkTreeWrapper ref={forkTreeRef as any}>
           {forkTree && <ForkTreeView baseTree={forkTree} />}
         </ForkTreeWrapper>
       )}
