@@ -222,4 +222,6 @@ const ForkTreeWrapper = styled.div`
   left: 1rem;
   bottom: 2rem;
   background-color: #0D1116;
+  max-height: 40vh;
+  overflow: auto;
 `;
