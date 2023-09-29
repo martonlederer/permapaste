@@ -11,7 +11,7 @@ export const Wrapper = styled.div`
 
 export const Side = styled.p`
   margin: 0;
-  color: #c6c6c6;
+  color: #aaaaaa;
   text-align: right;
   user-select: none;
 `;
